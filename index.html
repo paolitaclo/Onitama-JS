@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Onitama JS</title>
+    <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.0/css/materialize.min.css">
+    <link rel="stylesheet" href="style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  </head>
+  <body class="yellow lighten-4">
+
+    <div class="page">
+      <nav class="red darken-1">
+        <div class="nav-wrapper container">
+          <a href="#" class="brand-logo">Onitama JS</a>
+          <ul class="right hide-on-med-and-down">
+            <li><a href="howToPlay.html">How to Play</a></li>
+            <li><a href="index.html">New Game</a></li>
+          </ul>
+          <ul class="side-nav" id="mobile-demo">
+            <li><a href="howToPlay.html">How to Play</a></li>
+            <li><a href="index.html">New Game</a></li>
+          </ul>
+          <a href="#" data-activates="mobile-demo" class="button-collapse">
+            <i class="material-icons">menu</i>
+          </a>
+        </div>
+      </nav>
+
+
+      <div class=" row content container btn-play">
+        <div class="col s12 m5 l5 offset-m1">
+          <div class="card medium">
+            <h4>Player 1</h4>
+            <div class="row">
+              <form class="col s12">
+                <div class="row">
+                  <div class="input-field col s12">
+                   <input id="player1_name"
+                   type="text" class="validate">
+                   <label for="player1_name">Name</label>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+        <div class="col s12 m5 l5">
+          <div class="card medium">
+            <h4>Player 2</h4>
+            <div class="row">
+              <form class="col s12">
+                <div class="row">
+                  <div class="input-field col s12">
+                   <input id="player2_name"
+                   type="text" class="validate">
+                   <label for="player2_name">Name</label>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+        <div class="col s0 m1 l1">
+        </div>
+      </div>
+      <div class="row container btn-play">
+        <button class="btn waves-effect waves-light blue darken-3 play"
+        type="submit" name="action">Play
+        <i class="material-icons right">send</i>
+      </button>
+    </div>
+
+
+
+
+
+
+    </div>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.0/js/materialize.min.js"></script>
+    <script type="text/javascript" src="js/cards.json"></script>
+    <script type="text/javascript" src="js/main.js"></script>
+  </body>
+</html>
