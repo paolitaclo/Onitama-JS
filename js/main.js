@@ -6,7 +6,7 @@ let initialBoardMatrix = [
   ['b', 'b', 'BB', 'b', 'b']
 ];
 
-let boardMatrix = [
+let boardMatrixCard = [
   ['', '', '', '', ''],
   ['', '', '', '', ''],
   ['', '', 'O', '', ''],
@@ -31,15 +31,15 @@ function addSquares(array, element) {
     matFormat += '<div class="row no-margin">';
     for (var j = 0; j < array[i].length; j++) {
       if (j === 0) {
-        matFormat += '<div class="col s2 offset-s1 squares">' + array[i][j]
+        matFormat += '<div class="col s1 offset-s1 squares">' + array[i][j]
         + '</div>';
       } else {
-        matFormat += '<div class="col s2 squares">' + array[i][j] + '</div>';
+        matFormat += '<div class="col s1 squares">' + array[i][j] + '</div>';
       }
     }
     matFormat += '</div>';
   }
-  $(element).html(matFormat);
+  $(element).prepend(matFormat);
 }
 
 $(".play").on('click', function () {
@@ -48,11 +48,12 @@ $(".play").on('click', function () {
   getGameSetUp(getRandomCards(cards));
   addSquares(game.boardOnTable, ".board");
   $(".board").css('background-color', game.whosTurn);
-  addSquares(boardMatrix, ".move-card");
+  updateCardsOnTable();
+  // addSquares(boardMatrixCard, ".move-card");
   // getAnimalPicRandomUrl('monkey');
-  $(".name-card-animal").append(game.cardOnTable.name);
+  //$(".name-card-animal").append(game.cardOnTable.name);// => this will be replaced with addNameToMCard fn
 });
-
+//
 
 function getRandomCards(allCardsArr) {//call the fn getRandomCards(cards) cards is in cards.js
   let deckCards = [];
@@ -73,13 +74,13 @@ function randomNum(num) {
 //let newDeckCards = getRandomCards(cards);//ask if this is a good idea
 
 function getAnimalPicRandomUrl(animalName) { //string=> cards.name
-  const flickrUrl = `https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=4800d2269bf8ca945baf20ce930ea926&text=${animalName}&per_page=10&page=1&format=json&nojsoncallback=1&api_sig=a07d231b7df657149c9c74c55ce65f51`;
+  const flickrUrl = `https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=0b5a22cb21a4ac196a52464e10e34baf&text=${animalName}&per_page=10&page=1&format=json&nojsoncallback=1&263044609580b133757421d399d73606`;
   return fetch(flickrUrl)
   .then(function (response) {
     return response.json();
   })
   .then(function (objOfPics) {
-    // console.log(objOfPics);
+    //  console.log(objOfPics);
     let arrOfAnimalPics = objOfPics.photos.photo.map(function (eachPic) {
       let infoAnimalPic = {};
       infoAnimalPic.farm = eachPic.farm;
@@ -88,7 +89,7 @@ function getAnimalPicRandomUrl(animalName) { //string=> cards.name
       infoAnimalPic.secret = eachPic.secret;
       return infoAnimalPic;
     });
-    console.log(arrOfAnimalPics);
+    // console.log(arrOfAnimalPics);
   //   return arrOfAnimalPics;
   // })
   // .then(function (arrOfPicsObj) {
@@ -98,14 +99,8 @@ function getAnimalPicRandomUrl(animalName) { //string=> cards.name
     let server = animalPicSelected.server;
     let id = animalPicSelected.id;
     let secret = animalPicSelected.secret;
-    return `https://farm${farm}.staticflickr.com/${server}/${id}_${secret}_m.jpg`;
+    return `https://farm${farm}.staticflickr.com/${server}/${id}_${secret}_t.jpg`;
   });
-}
-
-function getPicsForDeck(deckArray) {
-  let randomDeck = getRandomCards();
-
-  let url = getAnimalPicRandomUrl();
 }
 
 function getGameSetUp(arrOfDeckCards) {
@@ -129,7 +124,23 @@ function rotateBoard (arrBoard) {
   return arrRotated.reverse();
 }
 
+function addInfoToCard(card, element) {//element w/classname top-A or top-B, middle-moveCard  ex: card=game.cardsPlayerBlue[0]
+  getAnimalPicRandomUrl(card.name).then(function (url) {
+    console.log(card.name);
+    $(element).find('.nameAnimal').text(card.name);
+    console.log($(element).find('.nameAnimal').text);
+    $(element).find('.animalImage').attr("src", url);
+    addSquares(boardMatrixCard, element);
+  })
+}
 
+function updateCardsOnTable() {
+  addInfoToCard(game.cardsPlayerBlue[0] ,'.top-A');
+  addInfoToCard(game.cardsPlayerBlue[1] ,'.top-B');
+  addInfoToCard(game.cardsPlayerRed[0] ,'.botton-A');
+  addInfoToCard(game.cardsPlayerRed[1] ,'.botton-B');
+  addInfoToCard(game.cardOnTable ,'.middle-moveCard');
+}
 
 
 
