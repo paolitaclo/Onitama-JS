@@ -33,7 +33,7 @@ $(".play").on('click', function () {
   $(".btn-play").hide();
   $(".game-setup").show();
   addSquares(boardMatrix);
-  getAnimalPicRandom('monkey');
+  // getAnimalPicRandomUrl('monkey');
 });
 
 
@@ -55,11 +55,10 @@ function randomNum(num) {
 
 //let newDeckCards = getRandomCards(cards);//ask if this is a good idea
 
-function getAnimalPicRandom(animalName) { //string=> cards.name
+function getAnimalPicRandomUrl(animalName) { //string=> cards.name
   const flickrUrl = `https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=4800d2269bf8ca945baf20ce930ea926&text=${animalName}&per_page=10&page=1&format=json&nojsoncallback=1&api_sig=a07d231b7df657149c9c74c55ce65f51`;
   return fetch(flickrUrl)
   .then(function (response) {
-
     return response.json();
   })
   .then(function (objOfPics) {
@@ -73,59 +72,28 @@ function getAnimalPicRandom(animalName) { //string=> cards.name
       return infoAnimalPic;
     });
     console.log(arrOfAnimalPics);
-    return arrOfAnimalPics;
-  })
-  .then(function (arrOfPicsObj) {
-    let animalPicSelected = arrOfPicsObj[randomNum(10)];//return an obj with the photo selected
-    console.log(animalPicSelected);
+  //   return arrOfAnimalPics;
+  // })
+  // .then(function (arrOfPicsObj) {
+    let animalPicSelected = arrOfAnimalPics[randomNum(10)];//return an obj with the photo selected
+    // console.log(animalPicSelected);
     let farm = animalPicSelected.farm; //refacture with destructuring
     let server = animalPicSelected.server;
     let id = animalPicSelected.id;
     let secret = animalPicSelected.secret;
-    let img = '<img src="' +`https://farm${farm}.staticflickr.com/${server}/${id}_${secret}_s.jpg` + '" alt="">';
-    console.log(img);
-    $("#img-pl1").append(img);
-  })
-  .catch(function(err){
-    console.log(err);
-  })
+    return `https://farm${farm}.staticflickr.com/${server}/${id}_${secret}_m.jpg`;
+  });
+}
+
+function getPicsForDeck(deckArray) {
+  let randomDeck = getRandomCards();
+
+  let url = getAnimalPicRandomUrl();
 }
 
 
 
 
-
-
-// function getPicFlikr(arrayofRan) {//  result of getRandomCards =>arrayof 5 cards or newDeckCardsvariable
-//   let picsPromisedArr = arrayofRan.map(function (card) {
-//     return fetch(`https://api.flickr.com/services/rest/?method=flickr.photos.
-//     search&api_key=4800d2269bf8ca945baf20ce930ea926&text=${card.name}&per_page=10&
-//     page=1&format=json&nojsoncallback=1&api_sig=a07d231b7df657149c9c74c55ce65f51`)
-//   });//arr of obj, each obj is the search of 10 pics of the animal name
-//   Promise.all(picsPromisedArr).then(function (animalPicsRes) {
-//     return Promise.all(animalPicsRes.map(function (animalObj) {
-//       console.log(animalObj);
-//       return animalObj.json();
-//     }));
-//   })
-//   .then(function (animalPics) {
-//     return animalPics.photos.photo.map(function (eachAnimalPic) {
-//       let infoAnimalPic = {};
-//       infoAnimalPic.farm = farm;
-//       infoAnimalPic.server = server;
-//       infoAnimalPic.id = id;
-//       infoAnimalPic.secret = secret;
-//       return infoAnimalPic;
-//     });
-//   })
-//   .then(function (arrAnimalInfo) {
-//
-//   })
-//
-//
-//
-//   let urlPic = `https://farm${farm-id}.staticflickr.com/${server-id}/${id}_${secret}_s.jpg`;
-// }
 
 
 
