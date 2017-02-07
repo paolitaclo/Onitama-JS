@@ -1,15 +1,31 @@
-let boardMatrix = [
-  ['x', 'x', 'XX', 'x', 'x'],
+let initialBoardMatrix = [
+  ['r', 'r', 'RR', 'r', 'r'],
   ['', '', '', '', ''],
   ['', '', '', '', ''],
   ['', '', '', '', ''],
-  ['o', 'o', 'OO', 'o', 'o']
+  ['b', 'b', 'BB', 'b', 'b']
 ];
+
+let boardMatrix = [
+  ['', '', '', '', ''],
+  ['', '', '', '', ''],
+  ['', '', 'O', '', ''],
+  ['', '', '', '', ''],
+  ['', '', '', '', '']
+];
+
+let game = {
+  cardsPlayerBlue: [],
+  cardsPlayerRed: [],
+  cardOnTable: undefined,
+  boardOnTable: undefined,
+  whosTurn: undefined
+};
 
 $(".button-collapse").sideNav();
 $(".game-setup").hide();
 
-function addSquares(array) {
+function addSquares(array, element) {
   let matFormat = '';
   for (var i = 0; i < array.length; i++) {
     matFormat += '<div class="row no-margin">';
@@ -23,17 +39,18 @@ function addSquares(array) {
     }
     matFormat += '</div>';
   }
-  $(".board").html(matFormat);
+  $(element).html(matFormat);
 }
-
-
-
 
 $(".play").on('click', function () {
   $(".btn-play").hide();
   $(".game-setup").show();
-  addSquares(boardMatrix);
+  getGameSetUp(getRandomCards(cards));
+  addSquares(game.boardOnTable, ".board");
+  $(".board").css('background-color', game.whosTurn);
+  addSquares(boardMatrix, ".move-card");
   // getAnimalPicRandomUrl('monkey');
+  $(".name-card-animal").append(game.cardOnTable.name);
 });
 
 
@@ -41,7 +58,7 @@ function getRandomCards(allCardsArr) {//call the fn getRandomCards(cards) cards 
   let deckCards = [];
   // .then(function (objAllCards) {
     while (deckCards.length < 5) {
-      let cardRandom =  allCardsArr[randomNum(6)];
+      let cardRandom =  allCardsArr[randomNum(16)];
       if (deckCards.indexOf(cardRandom) === -1) {
         deckCards.push(cardRandom);
       }
@@ -91,7 +108,26 @@ function getPicsForDeck(deckArray) {
   let url = getAnimalPicRandomUrl();
 }
 
+function getGameSetUp(arrOfDeckCards) {
+  game.cardsPlayerBlue.push(arrOfDeckCards[0], arrOfDeckCards[1]);
+  game.cardsPlayerRed.push(arrOfDeckCards[2], arrOfDeckCards[3]);
+  game.cardOnTable = arrOfDeckCards[4];
+  game.whosTurn = arrOfDeckCards[4].color;
+  game.boardOnTable = initialBoardMatrix.map(function (subArray) {
+    return subArray.slice();
+  });
+  if (game.whosTurn === 'red') {
+    game.boardOnTable = rotateBoard(game.boardOnTable);
+  }
+  return game;
+}
 
+function rotateBoard (arrBoard) {
+  let arrRotated = arrBoard.map(function(row) {
+    return row.reverse();
+  });
+  return arrRotated.reverse();
+}
 
 
 
