@@ -26,19 +26,20 @@ $(".button-collapse").sideNav();
 $(".game-setup").hide();
 
 function addSquares(array, element) {
-  let matFormat = '';
+  let matFormat = '<div class="col s9">';
   for (var i = 0; i < array.length; i++) {
     matFormat += '<div class="row no-margin">';
     for (var j = 0; j < array[i].length; j++) {
       if (j === 0) {
-        matFormat += '<div class="col s1 offset-s1 squares">' + array[i][j]
+        matFormat += '<div class="col s2 offset-s1 squares">' + array[i][j]
         + '</div>';
       } else {
-        matFormat += '<div class="col s1 squares">' + array[i][j] + '</div>';
+        matFormat += '<div class="col s2 squares">' + array[i][j] + '</div>';
       }
     }
     matFormat += '</div>';
   }
+  matFormat += '</div>';
   $(element).prepend(matFormat);
 }
 
@@ -99,7 +100,7 @@ function getAnimalPicRandomUrl(animalName) { //string=> cards.name
     let server = animalPicSelected.server;
     let id = animalPicSelected.id;
     let secret = animalPicSelected.secret;
-    return `https://farm${farm}.staticflickr.com/${server}/${id}_${secret}_t.jpg`;
+    return `https://farm${farm}.staticflickr.com/${server}/${id}_${secret}_s.jpg`;
   });
 }
 
@@ -141,10 +142,4 @@ function updateCardsOnTable() {
   addInfoToCard(game.cardsPlayerRed[1] ,'.botton-B');
   addInfoToCard(game.cardOnTable ,'.middle-moveCard');
 }
-
-
-
-
-
-
 //
