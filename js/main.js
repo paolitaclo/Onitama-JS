@@ -19,23 +19,37 @@ let game = {
   cardsPlayerRed: [],
   cardOnTable: undefined,
   boardOnTable: undefined,
-  whosTurn: undefined
+  whosTurn: undefined,
+  selectedCard: undefined,
+  selectedPosition: undefined
 };
 
 $(".button-collapse").sideNav();
 $(".game-setup").hide();
 
 function addSquares(array, element) {
-  let matFormat = '<div class="col s9">';
+  let matFormat = '';
+  if (element === '.middle-moveCard') {
+    matFormat = '<div class="col s8 no-padding">'
+  }
+  if (element === '.board') {
+    matFormat = '<div class="col s12">';
+  }
+  else{
+    matFormat = '<div class="col s9 no-padding">';
+  }
   for (var i = 0; i < array.length; i++) {
     matFormat += '<div class="row no-margin">';
     for (var j = 0; j < array[i].length; j++) {
-      if (j === 0) {
-        matFormat += '<div class="col s2 offset-s1 squares">' + array[i][j]
-        + '</div>';
-      } else {
-        matFormat += '<div class="col s2 squares">' + array[i][j] + '</div>';
+      let blueOrRed = array[i][j];
+      let classRedOrBlue;
+      if (blueOrRed !== '' && blueOrRed !== 'O') {
+      classRedOrBlue = (blueOrRed === 'r' || blueOrRed === 'RR') ? 'rd' : 'bl';
       }
+
+      let offset =  (j === 0) ? 'offset-s1' : '';
+      matFormat += `<div class="col s2 ${offset} squares elem-${i}-${j} ${classRedOrBlue}">
+      ${blueOrRed}</div>`;
     }
     matFormat += '</div>';
   }
@@ -100,7 +114,7 @@ function getAnimalPicRandomUrl(animalName) { //string=> cards.name
     let server = animalPicSelected.server;
     let id = animalPicSelected.id;
     let secret = animalPicSelected.secret;
-    return `https://farm${farm}.staticflickr.com/${server}/${id}_${secret}_s.jpg`;
+    return `https://farm${farm}.staticflickr.com/${server}/${id}_${secret}_q.jpg`;
   });
 }
 
@@ -132,6 +146,7 @@ function addInfoToCard(card, element) {//element w/classname top-A or top-B, mid
     console.log($(element).find('.nameAnimal').text);
     $(element).find('.animalImage').attr("src", url);
     addSquares(boardMatrixCard, element);
+    addPosMoveColor(element, [2,2], card.distance);
   })
 }
 
@@ -142,4 +157,38 @@ function updateCardsOnTable() {
   addInfoToCard(game.cardsPlayerRed[1] ,'.botton-B');
   addInfoToCard(game.cardOnTable ,'.middle-moveCard');
 }
+
+function getPositionsinCard(arrayOfTwo, arrOfDistances) {
+  let sum = arrOfDistances.map(function (eachDistance) {
+    return [arrayOfTwo[0] + eachDistance[0], arrayOfTwo[1] + eachDistance[1]];
+  });
+   let sumFiltered = sum.filter(function (eachArr) {
+     return (eachArr[0] >= 0 && eachArr[0] < 5) && (eachArr[1] >= 0 && eachArr[1] < 5);
+   });
+   return sumFiltered;
+}
+
+function addPosMoveColor(matrixElement, moveFrom, moveDestinations) {//delete the teal before gettin gin the for loop
+  let positionInCard = getPositionsinCard(moveFrom, moveDestinations);
+  for (var i = 0; i < positionInCard.length; i++) {
+    let pos = positionInCard[i];
+    console.log('position', pos);
+    posIntoClass = `.elem-${pos[0]}-${pos[1]}`;
+    $(matrixElement).find(posIntoClass).addClass('teal');
+  }
+}
+
+$('.deck-pl1 .card').on('click', function(event) {
+  let turnCards = (game.whosTurn === 'red') ? game.cardsPlayerRed : game.cardsPlayerBlue;
+  if ($(event.target).find('.botton-A').length > 0) {
+    game.selectedCard = turnCards[0];
+  } else {
+    game.selectedCard = turnCards[1];
+  }
+});
+
+$('.')
+
+
+
 //

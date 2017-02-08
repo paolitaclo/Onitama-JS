@@ -8,11 +8,36 @@
 }*/
 
 .squares {
-  height: 20px;
+  height: 37px;
   background: white;
   border: 1px solid black;
+  font-size: 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .no-margin {
   margin-bottom: 0;
+}
+
+.no-padding {
+  padding: 0;
+}
+
+.animalImage {
+  width: 90px;
+  height: 90px;
+}
+
+.board .squares {
+  height: 50px;
+}
+
+.rd{
+  color: red;
+}
+
+.bl {
+  color: blue;
 }
