@@ -15,8 +15,8 @@ let boardMatrixCard = [
 ];
 
 let game = {
-  cardsPlayerBlue: [],
-  cardsPlayerRed: [],
+  cardsTurn: [],
+  cardsOpponent: [],
   cardOnTable: undefined,
   boardOnTable: undefined,
   whosTurn: undefined,
@@ -44,7 +44,7 @@ function addSquares(array, element) {
       let blueOrRed = array[i][j];
       let classRedOrBlue;
       if (blueOrRed !== '' && blueOrRed !== 'O') {
-      classRedOrBlue = (blueOrRed === 'r' || blueOrRed === 'RR') ? 'rd' : 'bl';
+      classRedOrBlue = (blueOrRed === 'r' || blueOrRed === 'RR') ? 'red' : 'blue';
       }
 
       let offset =  (j === 0) ? 'offset-s1' : '';
@@ -62,6 +62,7 @@ $(".play").on('click', function () {
   $(".game-setup").show();
   getGameSetUp(getRandomCards(cards));
   addSquares(game.boardOnTable, ".board");
+  markMovePieces(game.whosTurn);
   $(".board").css('background-color', game.whosTurn);
   updateCardsOnTable();
   // addSquares(boardMatrixCard, ".move-card");
@@ -89,7 +90,7 @@ function randomNum(num) {
 //let newDeckCards = getRandomCards(cards);//ask if this is a good idea
 
 function getAnimalPicRandomUrl(animalName) { //string=> cards.name
-  const flickrUrl = `https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=0b5a22cb21a4ac196a52464e10e34baf&text=${animalName}&per_page=10&page=1&format=json&nojsoncallback=1&263044609580b133757421d399d73606`;
+  const flickrUrl = `https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=9b9a89fb101e6d6923d3bf58aca31a97&text=${animalName}&per_page=10&page=1&format=json&nojsoncallback=1`;
   return fetch(flickrUrl)
   .then(function (response) {
     return response.json();
@@ -119,8 +120,8 @@ function getAnimalPicRandomUrl(animalName) { //string=> cards.name
 }
 
 function getGameSetUp(arrOfDeckCards) {
-  game.cardsPlayerBlue.push(arrOfDeckCards[0], arrOfDeckCards[1]);
-  game.cardsPlayerRed.push(arrOfDeckCards[2], arrOfDeckCards[3]);
+  game.cardsTurn = [arrOfDeckCards[0], arrOfDeckCards[1]];
+  game.cardsOpponent = [arrOfDeckCards[2], arrOfDeckCards[3]];
   game.cardOnTable = arrOfDeckCards[4];
   game.whosTurn = arrOfDeckCards[4].color;
   game.boardOnTable = initialBoardMatrix.map(function (subArray) {
@@ -139,11 +140,15 @@ function rotateBoard (arrBoard) {
   return arrRotated.reverse();
 }
 
-function addInfoToCard(card, element) {//element w/classname top-A or top-B, middle-moveCard  ex: card=game.cardsPlayerBlue[0]
+function markMovePieces(color) {
+  $(`.${color}`).addClass('canMove');
+}
+
+function addInfoToCard(card, element) {//element w/classname top-A or top-B, middle-moveCard  ex: card=game.cardsTurn[0]
   getAnimalPicRandomUrl(card.name).then(function (url) {
-    console.log(card.name);
+    // console.log(card.name);
     $(element).find('.nameAnimal').text(card.name);
-    console.log($(element).find('.nameAnimal').text);
+    // console.log($(element).find('.nameAnimal').text);
     $(element).find('.animalImage').attr("src", url);
     addSquares(boardMatrixCard, element);
     addPosMoveColor(element, [2,2], card.distance);
@@ -151,10 +156,10 @@ function addInfoToCard(card, element) {//element w/classname top-A or top-B, mid
 }
 
 function updateCardsOnTable() {
-  addInfoToCard(game.cardsPlayerBlue[0] ,'.top-A');
-  addInfoToCard(game.cardsPlayerBlue[1] ,'.top-B');
-  addInfoToCard(game.cardsPlayerRed[0] ,'.botton-A');
-  addInfoToCard(game.cardsPlayerRed[1] ,'.botton-B');
+  addInfoToCard(game.cardsOpponent[0] ,'.top-A');
+  addInfoToCard(game.cardsOpponent[1] ,'.top-B');
+  addInfoToCard(game.cardsTurn[0] ,'.botton-A');
+  addInfoToCard(game.cardsTurn[1] ,'.botton-B');
   addInfoToCard(game.cardOnTable ,'.middle-moveCard');
 }
 
@@ -168,26 +173,45 @@ function getPositionsinCard(arrayOfTwo, arrOfDistances) {
    return sumFiltered;
 }
 
-function addPosMoveColor(matrixElement, moveFrom, moveDestinations) {//delete the teal before gettin gin the for loop
-  let positionInCard = getPositionsinCard(moveFrom, moveDestinations);
+function addPosMoveColor(matrixElement, moveFrom, cardDistanceList) {//delete the teal before gettin gin the for loop
+  let positionInCard = getPositionsinCard(moveFrom, cardDistanceList);
   for (var i = 0; i < positionInCard.length; i++) {
     let pos = positionInCard[i];
-    console.log('position', pos);
+    // console.log('position', pos);
     posIntoClass = `.elem-${pos[0]}-${pos[1]}`;
     $(matrixElement).find(posIntoClass).addClass('teal');
   }
 }
 
+function clearPreview(matrixElement) {
+  $(matrixElement).find('.teal').removeClass('teal');
+}
+
 $('.deck-pl1 .card').on('click', function(event) {
-  let turnCards = (game.whosTurn === 'red') ? game.cardsPlayerRed : game.cardsPlayerBlue;
-  if ($(event.target).find('.botton-A').length > 0) {
-    game.selectedCard = turnCards[0];
+  if ($(this).find('.botton-A').length > 0) {
+    game.selectedCard = game.cardsTurn[0];
   } else {
-    game.selectedCard = turnCards[1];
+    game.selectedCard = game.cardsTurn[1];
   }
 });
 
-$('.')
+$('.board').on('mouseenter mouseleave', '.canMove', function (event) {
+  if (event.type === 'mouseleave') {
+    clearPreview('.board');
+  } else if (game.selectedCard !== undefined) {
+    let classes = event.target.classList;
+    let position = [];
+    for (var i = 0; i < classes.length; i++) {
+      if (classes[i].includes('elem-')) {
+        position = [Number.parseInt(classes[i].charAt(5)),
+        Number.parseInt(classes[i].charAt(7))];
+        break;
+      }
+    }
+    clearPreview('.board');
+    addPosMoveColor('.board', position, game.selectedCard.distance);
+  }
+});
 
 
 

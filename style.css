@@ -34,10 +34,12 @@
   height: 50px;
 }
 
-.rd{
+.squares.red {
+  background-color: white !important;
   color: red;
 }
 
-.bl {
+.squares.blue {
+  background-color: white !important;
   color: blue;
 }
