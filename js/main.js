@@ -27,6 +27,23 @@ let game = {
 $(".button-collapse").sideNav();
 $(".game-setup").hide();
 
+function getOrPrompt(lsKeyValue) {
+  var valInStorage = localStorage.getItem(lsKeyValue);
+
+  if(!valInStorage) {
+    valInStorage = prompt(`Enter a value for ${lsKeyValue}`);
+    localStorage.setItem(lsKeyValue, valInStorage);
+  }
+
+  return valInStorage;
+}
+
+let apiKey = getOrPrompt('api-key');
+// let googleSrc = `` // put proper src in here
+// let scriptTag = document.createElement('script');
+// scriptTag.src = googleSrc;
+// document.body.append(scriptTag);
+
 function addSquares(array, element) {
   let matFormat = '';
   if (element === '.middle-moveCard') {
@@ -44,7 +61,7 @@ function addSquares(array, element) {
       let blueOrRed = array[i][j];
       let classRedOrBlue;
       if (blueOrRed !== '' && blueOrRed !== 'O') {
-      classRedOrBlue = (blueOrRed === 'r' || blueOrRed === 'RR') ? 'red' : 'blue';
+        classRedOrBlue = (blueOrRed === 'r' || blueOrRed === 'RR') ? 'red' : 'blue';
       }
 
       let offset =  (j === 0) ? 'offset-s1' : '';
@@ -60,7 +77,14 @@ function addSquares(array, element) {
 $(".play").on('click', function () {
   $(".btn-play").hide();
   $(".game-setup").show();
-  getGameSetUp(getRandomCards(cards));
+  let gameCards = getRandomCards(cards);
+  gameCards.forEach(function(card) {
+    getAnimalPicRandomUrl(card.name).then(function(url) {
+      card.image = url;
+      updateCardsOnTable();
+    });
+  });
+  getGameSetUp(gameCards);
   addSquares(game.boardOnTable, ".board");
   markMovePieces(game.whosTurn);
   $(".board").css('background-color', game.whosTurn);
@@ -90,7 +114,7 @@ function randomNum(num) {
 //let newDeckCards = getRandomCards(cards);//ask if this is a good idea
 
 function getAnimalPicRandomUrl(animalName) { //string=> cards.name
-  const flickrUrl = `https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=9b9a89fb101e6d6923d3bf58aca31a97&text=${animalName}&per_page=10&page=1&format=json&nojsoncallback=1`;
+  const flickrUrl = `https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=${apiKey}&text=${animalName}&per_page=10&page=1&format=json&nojsoncallback=1`;
   return fetch(flickrUrl)
   .then(function (response) {
     return response.json();
@@ -145,14 +169,11 @@ function markMovePieces(color) {
 }
 
 function addInfoToCard(card, element) {//element w/classname top-A or top-B, middle-moveCard  ex: card=game.cardsTurn[0]
-  getAnimalPicRandomUrl(card.name).then(function (url) {
-    // console.log(card.name);
-    $(element).find('.nameAnimal').text(card.name);
-    // console.log($(element).find('.nameAnimal').text);
-    $(element).find('.animalImage').attr("src", url);
-    addSquares(boardMatrixCard, element);
-    addPosMoveColor(element, [2,2], card.distance);
-  })
+  $(element).find('.nameAnimal').text(card.name);
+  $(element).find('.animalImage').attr('src', card.image);
+  $(`${element} .card-matrix`).empty();
+  addSquares(boardMatrixCard, `${element} .card-matrix`);
+  addPosMoveColor(element, [2,2], card.distance, 'teal');
 }
 
 function updateCardsOnTable() {
@@ -173,13 +194,13 @@ function getPositionsinCard(arrayOfTwo, arrOfDistances) {
    return sumFiltered;
 }
 
-function addPosMoveColor(matrixElement, moveFrom, cardDistanceList) {//delete the teal before gettin gin the for loop
+function addPosMoveColor(matrixElement, moveFrom, cardDistanceList, classColor) {//delete the teal before gettin gin the for loop
   let positionInCard = getPositionsinCard(moveFrom, cardDistanceList);
   for (var i = 0; i < positionInCard.length; i++) {
     let pos = positionInCard[i];
     // console.log('position', pos);
     posIntoClass = `.elem-${pos[0]}-${pos[1]}`;
-    $(matrixElement).find(posIntoClass).addClass('teal');
+    $(matrixElement).find(posIntoClass).addClass(classColor);
   }
 }
 
@@ -187,7 +208,22 @@ function clearPreview(matrixElement) {
   $(matrixElement).find('.teal').removeClass('teal');
 }
 
+function getPositionFromClassName(element) {
+  let classes = element.classList;
+  let position = [];
+  for (var i = 0; i < classes.length; i++) {
+    if (classes[i].includes('elem-')) {
+      position = [Number.parseInt(classes[i].charAt(5)),
+      Number.parseInt(classes[i].charAt(7))];
+      break;
+    }
+  }
+  return position;
+}
+
 $('.deck-pl1 .card').on('click', function(event) {
+  $('.card').removeClass('cardPreviewSel');
+  $(this).addClass('cardPreviewSel');
   if ($(this).find('.botton-A').length > 0) {
     game.selectedCard = game.cardsTurn[0];
   } else {
@@ -199,19 +235,76 @@ $('.board').on('mouseenter mouseleave', '.canMove', function (event) {
   if (event.type === 'mouseleave') {
     clearPreview('.board');
   } else if (game.selectedCard !== undefined) {
-    let classes = event.target.classList;
-    let position = [];
-    for (var i = 0; i < classes.length; i++) {
-      if (classes[i].includes('elem-')) {
-        position = [Number.parseInt(classes[i].charAt(5)),
-        Number.parseInt(classes[i].charAt(7))];
-        break;
-      }
-    }
     clearPreview('.board');
-    addPosMoveColor('.board', position, game.selectedCard.distance);
+    addPosMoveColor('.board', getPositionFromClassName(event.target), game.selectedCard.distance, 'teal');
   }
 });
+
+$('.board').on('click', '.canMove', function (event) {
+  if (game.selectedCard !== undefined) {
+    game.selectedPosition = getPositionFromClassName(event.target);
+    addPosMoveColor('.board', game.selectedPosition, game.selectedCard.distance, 'movesToChose');
+  }
+});
+
+$('.board').on('click', '.movesToChose', function (event) {
+  let [i, j] = game.selectedPosition;
+  let [y, z] = getPositionFromClassName(event.target);
+  let value = game.boardOnTable[i][j];
+  game.boardOnTable[i][j] = '';
+  game.boardOnTable[y][z] = value;
+  $('.board').empty();
+  addSquares(game.boardOnTable, '.board');
+  game.selectedPosition = undefined;
+})
+
+function updateTurn() {
+  for (var i = 0; i < game.cardsTurn.length; i++) {
+    if (game.cardsTurn[i] === game.selectedCard) {
+      game.cardsTurn[i] = game.cardOnTable;
+    }
+  }
+  game.cardOnTable = game.selectedCard;
+  game.selectedCard = undefined;
+  let tempPairOfCards = game.cardsTurn;
+  game.cardsTurn = game.cardsOpponent;
+  game.cardsOpponent = tempPairOfCards;
+
+  game.cardsOpponent;
+  if(game.whosTurn === 'blue') {
+    game.whosTurn = 'red';
+  }else{
+    game.whosTurn = 'blue';
+  }
+  game.boardOnTable = rotateBoard(game.boardOnTable);
+
+}
+
+$('.done').on('click', function () {
+  updateTurn();
+  $('.board').empty();
+  addSquares(game.boardOnTable, '.board');
+  markMovePieces(game.whosTurn);
+  $(".board").css('background-color', game.whosTurn);
+  updateCardsOnTable();
+  game.selectedCard = undefined;
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -43,3 +43,20 @@
   background-color: white !important;
   color: blue;
 }
+
+.cardPreviewSel {
+  border: 4px solid #424242;
+}
+
+.squares.canMove:hover {
+  background-color: #b2ff59 !important;
+}
+
+.movesToChose {
+  background-color: #f06292 !important;
+}
+
+
+
+
+/**/

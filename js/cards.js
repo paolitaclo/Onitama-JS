@@ -6,7 +6,7 @@ const cards = [
   },
   {
     "name": "crab",
-    "distance": [[-1,0], [2,0], [0, -2]],
+    "distance": [[-1,0], [0, 2], [0, -2]],
     "color": "blue"
   },
   {
