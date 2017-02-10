@@ -232,7 +232,13 @@ $('.board').on('click', '.canMove', function (event) {
 $('.board').on('click', '.movesToChose', function (event) {
   let [i, j] = game.selectedPosition;
   let [y, z] = getPositionFromClassName(event.target);
+  let valueTonWin = game.boardOnTable[y][z];
   let value = game.boardOnTable[i][j];
+  if (valueTonWin === 'BB' || valueTonWin === 'RR') {
+    // $('#test').on('click', function() {
+      $('#modal1').modal().modal('open');
+// })
+  }
   game.boardOnTable[i][j] = '';
   game.boardOnTable[y][z] = value;
   $('.board').empty();
