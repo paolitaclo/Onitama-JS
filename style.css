@@ -1,3 +1,16 @@
+.with-img {
+  background: url('./images/big-image.jpg')center no-repeat;
+  max-width: 100%;
+  width: 1435px;
+  height: 650px;
+  margin: 0;
+  opacity: 0.9;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
 .btn-play {
   display: flex;
   justify-content: center;
