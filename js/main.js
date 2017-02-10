@@ -288,6 +288,7 @@ $('.done').on('click', function () {
   $(".board").css('background-color', game.whosTurn);
   updateCardsOnTable();
   game.selectedCard = undefined;
+  $('.card').removeClass('cardPreviewSel');
 });
 
 
