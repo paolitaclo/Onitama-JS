@@ -1,3 +1,4 @@
+import 'whatwg-fetch';
 let initialBoardMatrix = [
   ['r', 'r', 'RR', 'r', 'r'],
   ['', '', '', '', ''],
