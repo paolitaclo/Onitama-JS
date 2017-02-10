@@ -79,7 +79,7 @@
   background-color: #f06292;
 }
 
-/*.you-won {
+.you-won {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -87,6 +87,6 @@
 
 .you-won h2 {
   margin-top: 20px;
-}*/
+}
 
 /**/
