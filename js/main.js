@@ -26,7 +26,7 @@ let game = {
 
 $(".button-collapse").sideNav();
 $(".game-setup").hide();
-
+$(".modal1").hide();
 function getOrPrompt(lsKeyValue) {
   var valInStorage = localStorage.getItem(lsKeyValue);
 
@@ -39,10 +39,6 @@ function getOrPrompt(lsKeyValue) {
 }
 
 let apiKey = getOrPrompt('api-key');
-// let googleSrc = `` // put proper src in here
-// let scriptTag = document.createElement('script');
-// scriptTag.src = googleSrc;
-// document.body.append(scriptTag);
 
 function addSquares(array, element) {
   let matFormat = '';
@@ -89,15 +85,10 @@ $(".play").on('click', function () {
   markMovePieces(game.whosTurn);
   $(".board").css('background-color', game.whosTurn);
   updateCardsOnTable();
-  // addSquares(boardMatrixCard, ".move-card");
-  // getAnimalPicRandomUrl('monkey');
-  //$(".name-card-animal").append(game.cardOnTable.name);// => this will be replaced with addNameToMCard fn
 });
-//
 
-function getRandomCards(allCardsArr) {//call the fn getRandomCards(cards) cards is in cards.js
+function getRandomCards(allCardsArr) {
   let deckCards = [];
-  // .then(function (objAllCards) {
     while (deckCards.length < 5) {
       let cardRandom =  allCardsArr[randomNum(16)];
       if (deckCards.indexOf(cardRandom) === -1) {
@@ -111,16 +102,13 @@ function randomNum(num) {
   return Math.floor(Math.random()*num);
 }
 
-//let newDeckCards = getRandomCards(cards);//ask if this is a good idea
-
-function getAnimalPicRandomUrl(animalName) { //string=> cards.name
+function getAnimalPicRandomUrl(animalName) {
   const flickrUrl = `https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=${apiKey}&text=${animalName}&per_page=10&page=1&format=json&nojsoncallback=1`;
   return fetch(flickrUrl)
   .then(function (response) {
     return response.json();
   })
   .then(function (objOfPics) {
-    //  console.log(objOfPics);
     let arrOfAnimalPics = objOfPics.photos.photo.map(function (eachPic) {
       let infoAnimalPic = {};
       infoAnimalPic.farm = eachPic.farm;
@@ -129,13 +117,8 @@ function getAnimalPicRandomUrl(animalName) { //string=> cards.name
       infoAnimalPic.secret = eachPic.secret;
       return infoAnimalPic;
     });
-    // console.log(arrOfAnimalPics);
-  //   return arrOfAnimalPics;
-  // })
-  // .then(function (arrOfPicsObj) {
-    let animalPicSelected = arrOfAnimalPics[randomNum(10)];//return an obj with the photo selected
-    // console.log(animalPicSelected);
-    let farm = animalPicSelected.farm; //refacture with destructuring
+    let animalPicSelected = arrOfAnimalPics[randomNum(10)];
+    let farm = animalPicSelected.farm;
     let server = animalPicSelected.server;
     let id = animalPicSelected.id;
     let secret = animalPicSelected.secret;
@@ -168,7 +151,7 @@ function markMovePieces(color) {
   $(`.${color}`).addClass('canMove');
 }
 
-function addInfoToCard(card, element) {//element w/classname top-A or top-B, middle-moveCard  ex: card=game.cardsTurn[0]
+function addInfoToCard(card, element) {
   $(element).find('.nameAnimal').text(card.name);
   $(element).find('.animalImage').attr('src', card.image);
   $(`${element} .card-matrix`).empty();
@@ -194,11 +177,10 @@ function getPositionsinCard(arrayOfTwo, arrOfDistances) {
    return sumFiltered;
 }
 
-function addPosMoveColor(matrixElement, moveFrom, cardDistanceList, classColor) {//delete the teal before gettin gin the for loop
+function addPosMoveColor(matrixElement, moveFrom, cardDistanceList, classColor) {
   let positionInCard = getPositionsinCard(moveFrom, cardDistanceList);
   for (var i = 0; i < positionInCard.length; i++) {
     let pos = positionInCard[i];
-    // console.log('position', pos);
     posIntoClass = `.elem-${pos[0]}-${pos[1]}`;
     $(matrixElement).find(posIntoClass).addClass(classColor);
   }
@@ -290,23 +272,3 @@ $('.done').on('click', function () {
   game.selectedCard = undefined;
   $('.card').removeClass('cardPreviewSel');
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//
