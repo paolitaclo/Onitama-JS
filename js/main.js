@@ -24,6 +24,8 @@ let game = {
   selectedPosition: undefined
 };
 
+let randomNum = (num) => Math.floor(Math.random()*num);
+
 $(".button-collapse").sideNav();
 $(".game-setup").hide();
 $(".modal1").hide();
@@ -70,12 +72,12 @@ function addSquares(array, element) {
   $(element).prepend(matFormat);
 }
 
-$(".play").on('click', function () {
+$(".play").on('click', () => {
   $(".btn-play").hide();
   $(".game-setup").show();
   let gameCards = getRandomCards(cards);
-  gameCards.forEach(function(card) {
-    getAnimalPicRandomUrl(card.name).then(function(url) {
+  gameCards.forEach(card => {
+    getAnimalPicRandomUrl(card.name).then(url => {
       card.image = url;
       updateCardsOnTable();
     });
@@ -98,18 +100,12 @@ function getRandomCards(allCardsArr) {
     return deckCards;
 }
 
-function randomNum(num) {
-  return Math.floor(Math.random()*num);
-}
-
 function getAnimalPicRandomUrl(animalName) {
   const flickrUrl = `https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=${apiKey}&text=${animalName}&per_page=10&page=1&format=json&nojsoncallback=1`;
   return fetch(flickrUrl)
-  .then(function (response) {
-    return response.json();
-  })
-  .then(function (objOfPics) {
-    let arrOfAnimalPics = objOfPics.photos.photo.map(function (eachPic) {
+  .then(response => response.json())
+  .then(objOfPics => {
+    let arrOfAnimalPics = objOfPics.photos.photo.map(eachPic => {
       let infoAnimalPic = {};
       infoAnimalPic.farm = eachPic.farm;
       infoAnimalPic.server = eachPic.server;
