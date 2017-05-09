@@ -1,6 +1,6 @@
-# q1-project
-q1 project Galvanize: Onitama JS
-Onitama Js is a two player game in which each player has 5 pawns: one master (RR or BB depending on the color the player choose) and his 4 disciples.
+# Onitama JS
+
+[Onitama Js](https://paolitaclo.github.io/Onitama-JS/) is a two player game in which each player has 5 pawns: one master (RR or BB depending on the color the player choose) and his 4 disciples.
 
 The way a player can win is either by capturing the opponent’s master or by taking your master and positioned it in the opponent’s master  where it started.
 
