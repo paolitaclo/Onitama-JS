@@ -76,12 +76,6 @@ $(".play").on('click', () => {
   $(".btn-play").hide();
   $(".game-setup").show();
   let gameCards = getRandomCards(cards);
-  gameCards.forEach(card => {
-    getAnimalPicRandomUrl(card.name).then(url => {
-      card.image = url;
-      updateCardsOnTable();
-    });
-  });
   getGameSetUp(gameCards);
   addSquares(game.boardOnTable, ".board");
   markMovePieces(game.whosTurn);
@@ -98,28 +92,6 @@ function getRandomCards(allCardsArr) {
       }
     }
     return deckCards;
-}
-
-function getAnimalPicRandomUrl(animalName) {
-  const flickrUrl = `https://api.flickr.com/services/rest/?method=flickr.photos.search&api_key=${apiKey}&text=${animalName}&per_page=10&page=1&format=json&nojsoncallback=1`;
-  return fetch(flickrUrl)
-  .then(response => response.json())
-  .then(objOfPics => {
-    let arrOfAnimalPics = objOfPics.photos.photo.map(eachPic => {
-      let infoAnimalPic = {};
-      infoAnimalPic.farm = eachPic.farm;
-      infoAnimalPic.server = eachPic.server;
-      infoAnimalPic.id = eachPic.id;
-      infoAnimalPic.secret = eachPic.secret;
-      return infoAnimalPic;
-    });
-    let animalPicSelected = arrOfAnimalPics[randomNum(10)];
-    let farm = animalPicSelected.farm;
-    let server = animalPicSelected.server;
-    let id = animalPicSelected.id;
-    let secret = animalPicSelected.secret;
-    return `https://farm${farm}.staticflickr.com/${server}/${id}_${secret}_q.jpg`;
-  });
 }
 
 function getGameSetUp(arrOfDeckCards) {
@@ -149,7 +121,7 @@ function markMovePieces(color) {
 
 function addInfoToCard(card, element) {
   $(element).find('.nameAnimal').text(card.name);
-  $(element).find('.animalImage').attr('src', card.image);
+  $(element).find('.animalImage').attr('src', card.picture);
   $(`${element} .card-matrix`).empty();
   addSquares(boardMatrixCard, `${element} .card-matrix`);
   addPosMoveColor(element, [2,2], card.distance, 'teal');
